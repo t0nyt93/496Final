@@ -1,4 +1,5 @@
 from flask import Flask
+import time, datetime
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
@@ -8,9 +9,11 @@ app.config['DEBUG'] = True
 
 @app.route('/')
 def hello():
-    """Return a friendly HTTP greeting."""
-    return 'Hello World!'
+    var = time.time() 
+    t = datetime.datetime.fromtimestamp(var).strftime('%Y-%m-%d %H:%M:%S')	
 
+    """Return a friendly HTTP greeting."""
+    return t 
 
 @app.errorhandler(404)
 def page_not_found(e):
