@@ -1,6 +1,8 @@
 from flask import Flask
 import time, datetime
+import webapp2
 app = Flask(__name__)
+
 app.config['DEBUG'] = True
 
 # Note: We don't need to call run() since our application is embedded within
@@ -9,11 +11,11 @@ app.config['DEBUG'] = True
 
 @app.route('/')
 def hello():
-    var = time.time() 
-    t = datetime.datetime.fromtimestamp(var).strftime('%Y-%m-%d %H:%M:%S')	
+    var = time.time()
+    t = datetime.datetime.fromtimestamp(var).strftime('%Y-%m-%d %H:%M:%S')
 
     """Return a friendly HTTP greeting."""
-    return t 
+    return t
 
 @app.errorhandler(404)
 def page_not_found(e):
