@@ -16,14 +16,6 @@ class WelcomeHandler(webapp2.RequestHandler):
 class BookHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Hello, Book Handler!')
-    def post(self):
-        self.response.write('Hello, Book Handler!')
-    def delete(self):
-        self.response.write('Hello, Book Handler!')
-    def put(self):
-        self.response.write('Hello, Book Handler!')
-    def patch(self):
-        self.response.write('Hello, Book Handler!')
 
 class CustomerHandler(webapp2.RequestHandler):
     def get(self):
@@ -34,13 +26,21 @@ def handle_404(request, response, exception):
     response.write( ' The URL you requested isn\'t valid in this site!' )
     response.set_status(404)
 
+def handle_500(request, response, exception):
+    logging.exception(exception)
+    response.write( exception )
+    response.set_status(500)
+
 
 app = webapp2.WSGIApplication([
     ('/', WelcomeHandler),
 ], debug=True)
 
 app.router.add( (r'/books',BooksHandler) )
-app.router.add( (r'/books',CustomerHandler) )
+app.router.add( (r'/customer',CustomerHandler) )
+
+app.error_handlers[404] = handle_404
+app.error_handlers[500] = handle_500
 
 def main():
     app.run()
