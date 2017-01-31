@@ -1,5 +1,6 @@
 from flask import Flask
 import time, datetime
+import logging
 import webapp2
 #app = Flask(__name__)
 
@@ -7,13 +8,39 @@ import webapp2
 
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
-class HelloWebapp2(webapp2.RequestHandler):
+class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello, webapp2!')
+        self.respone.headers['Content-Type'] = 'text/plain'
+        self.response.write('Welcome to the Home URL of my CS496 Website. !')
+
+class BookHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.write('Hello, Book Handler!')
+    def post(self):
+        self.response.write('Hello, Book Handler!')
+    def delete(self):
+        self.response.write('Hello, Book Handler!')
+    def put(self):
+        self.response.write('Hello, Book Handler!')
+    def patch(self):
+        self.response.write('Hello, Book Handler!')
+
+class CustomerHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.write('Hello, Customer Handler!')
+
+def handle_404(request, response, exception):
+    logging.exception(exception)
+    response.write( ' The URL you requested isn\'t valid in this site!' )
+    response.set_status(404)
+
 
 app = webapp2.WSGIApplication([
-    ('/', HelloWebapp2),
+    ('/', WelcomeHandler),
 ], debug=True)
+
+app.router.add( (r'/books',BooksHandler) )
+app.router.add( (r'/books',CustomerHandler) )
 
 def main():
     app.run()
