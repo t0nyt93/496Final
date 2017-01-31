@@ -11,7 +11,7 @@ import webapp2
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        self.respone.headers['Content-Type'] = 'text/plain'
+        self.response.headers['Content-Type'] = 'text/plain'
         self.response.write('Welcome to the Home URL of my CS496 Website. !')
 
 
