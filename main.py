@@ -1,6 +1,5 @@
 from flask import Flask
 import time, datetime
-import logging
 import webapp2
 #app = Flask(__name__)
 
@@ -22,12 +21,10 @@ class CustomerHandler(webapp2.RequestHandler):
         self.response.write('Hello, Customer Handler!')
 
 def handle_404(request, response, exception):
-    logging.exception(exception)
     response.write( ' The URL you requested isn\'t valid in this site!' )
     response.set_status(404)
 
 def handle_500(request, response, exception):
-    logging.exception(exception)
     response.write( exception )
     response.set_status(500)
 
