@@ -1,6 +1,10 @@
 from flask import Flask
 import time, datetime
+
 import webapp2
+import os
+from google.appengine.ext.webapp import template
+
 #app = Flask(__name__)
 
 #app.config['DEBUG'] = True
@@ -11,8 +15,15 @@ import webapp2
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Welcome to the Home URL of my CS496 Website. !')
+        url = '/'
+        url_linktext = 'Login'
+        template_values = {
+            'url': url,
+            'url_linktext': url_linktext,
+        }
+
+        path = os.path.join(os.path.dirname(__file__), 'templates\index.html')v
+        self.response.out.write(template.render(path, template_values))
 
 
 class BookHandler(webapp2.RequestHandler):
