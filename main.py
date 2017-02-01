@@ -47,10 +47,6 @@ class BookHandler(webapp2.RequestHandler):
     def get(self, book_id):
         self.response.write('Book id is %s' % book_id)
 
-class BookListHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.write('Pretend this is a list of the Books!')
-
 
 """
 Customer Handler
@@ -63,12 +59,6 @@ class CustomerHandler(webapp2.RequestHandler):
         self.response.write('Customer id is %s' % customer_id)
         #Potentially use ID as lookup then do an object_key.get()
         #and write out the json structure.
-
-class CustomerListHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.write('Pretend this is a list of the customers')
-
-
 
 
 def handle_404(request, response, exception):
@@ -88,10 +78,10 @@ app = webapp2.WSGIApplication([
 app.error_handlers[404] = handle_404
 app.error_handlers[500] = handle_500
 
-app.router.add((r'/books', BookListHandler))
-app.router.add((r'/customers', CustomerListHandler))
-app.router.add((r'/customers/(\d+)', CustomerHandler))
 app.router.add((r'/books/(\d+)', BookHandler))
+app.router.add((r'/customers/(\d+)', CustomerHandler))
+
+
 
 
 
