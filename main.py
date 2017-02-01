@@ -15,15 +15,15 @@ from google.appengine.ext.webapp import template
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        url = '/'
-        url_linktext = 'Login'
+        url = ''
+        urllinktext = 'Login'
         template_values = {
             'url': url,
-            'url_linktext': url_linktext,
+            'url_linktext': urllinktext,
         }
 
         path = os.path.join(os.path.dirname(__file__), 'templates\index.html')v
-        self.response.out.write(template.render(path, template_values))
+        self.response.write(template.render(path, template_values))
 
 
 class BookHandler(webapp2.RequestHandler):
