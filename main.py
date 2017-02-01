@@ -1,39 +1,74 @@
 from flask import Flask
 import time, datetime
 
+
 import webapp2
 import os
-from google.appengine.ext.webapp import template
+from google.appengine.ext import ndb
 
-#app = Flask(__name__)
 
-#app.config['DEBUG'] = True
+# RESTful permissions
+PERMISSION_ANYONE = 'anyone'
+PERMISSION_LOGGED_IN_USER = 'logged_in_user'
+PERMISSION_OWNER_USER = 'owner_user'
+PERMISSION_ADMIN = 'admin'
 
-# Note: We don't need to call run() since our application is embedded within
-# the App Engine WSGI application server.
+"""
+Create Database Models
+"""
+
+
+class customerModel(ndb.Model):
+    id = ndb.IntegerProperty
+    title = ndb.StringProperty
+    isbn = ndb.IntegerProperty
+    genre = [ ndb.StringProperty() ]
+    author = ndb.StringProperty
+
+
+class bookModel(ndb.Model):
+    id = ndb.IntegerProperty
+    name = ndb.StringProperty
+    balance = ndb.IntegerProperty
+    checked_out = [ ndb.StringProperty ]
 
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        url = ''
-        url_linktext = 'Login'
-        template_values = {
-            'url': url,
-            'url_linktext': url_linktext,
-        }
+        self.response.write('Hello, CS496!')
 
-        path = os.path.join(os.path.dirname(__file__), 'index.html')
-        self.response.out.write(template.render(path, template_values))
+"""
+Customer Handler
 
+Provides a REST api for creating, updating, and deleting book objects
+"""
 
 class BookHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.write('Hello, Book Handler!')
+    def get(self, book_id):
+        self.response.write('Book id is %s' % book_id)
 
+class BookListHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.write('Pretend this is a list of the Books!')
+
+
+"""
+Customer Handler
+
+Provides a REST api for creating, updating, and deleting Customer objects
+"""
 
 class CustomerHandler(webapp2.RequestHandler):
+    def get(self, customer_id):
+        self.response.write('Customer id is %s' % customer_id)
+        #Potentially use ID as lookup then do an object_key.get()
+        #and write out the json structure.
+
+class CustomerListHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello, Customer Handler!')
+        self.response.write('Pretend this is a list of the customers')
+
+
 
 
 def handle_404(request, response, exception):
@@ -53,8 +88,11 @@ app = webapp2.WSGIApplication([
 app.error_handlers[404] = handle_404
 app.error_handlers[500] = handle_500
 
-app.router.add((r'/books', BookHandler))
-app.router.add((r'/customer', CustomerHandler))
+app.router.add((r'/books', BookListHandler))
+app.router.add((r'/customers', CustomerListHandler))
+app.router.add((r'/customers/(\d+)', CustomerHandler))
+app.router.add((r'/books/(\d+)', BookHandler))
+
 
 
 
