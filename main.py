@@ -16,13 +16,13 @@ from google.appengine.ext.webapp import template
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
         url = ''
-        urllinktext = 'Login'
+        url_linktext = 'Login'
         template_values = {
             'url': url,
-            'url_linktext': urllinktext,
+            'url_linktext': url_linktext,
         }
 
-        path = os.path.join(os.path.dirname(__file__), 'templates\index.html')v
+        path = os.path.join(os.path.dirname(__file__), 'templates\index.html')
         self.response.write(template.render(path, template_values))
 
 
