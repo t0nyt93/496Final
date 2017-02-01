@@ -22,8 +22,8 @@ class WelcomeHandler(webapp2.RequestHandler):
             'url_linktext': url_linktext,
         }
 
-        path = os.path.join(os.path.dirname(__file__), 'templates\index.html')
-        self.response.write(template.render(path, template_values))
+        path = os.path.join(os.path.dirname(__file__), 'index.html')
+        self.response.out.write(template.render(path, template_values))
 
 
 class BookHandler(webapp2.RequestHandler):
