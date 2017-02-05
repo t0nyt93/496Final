@@ -77,7 +77,7 @@ class BookListHandler(webapp2.RequestHandler):
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
-        foundFlag = 0
+        output = []
 
         #/books
         if args == "" or args == "/":
@@ -90,23 +90,18 @@ class BookListHandler(webapp2.RequestHandler):
                     books = self.b.filter(bookModel.checkedIn == False)
 
                 for book in books:
-                    self.response.write(json.dumps(book.to_dict()))
-                    foundFlag = 1
+                    output.append(json.dumps(book.to_dict()))
+
+
             else:
                 for book in self.b:
-                    self.response.write(json.dumps(book.to_dict()))
-                    foundFlag = 1
+                    output.append(json.dumps(book.to_dict()))
 
         elif path_len == 2 and path[1].isdigit():
-            desired_book = self.b.filter(bookModel.id == int(path[1]))
-            for x in desired_book:
-                self.response.headers['Content-Type'] = 'application/json'
-                self.response.write(json.dumps(x.to_dict()))
-                foundFlag = 1
-
-        if not foundFlag:
-            self.response.write("[]")
-
+            desired_book = self.b.filter(bookModel.id == int(path[1])).get()
+            self.response.headers['Content-Type'] = 'application/json'
+            output.append(json.dumps(desired_book.to_dict()))
+        self.response.write( ",".join(output).join(("[", "]")))
 
     def post(self, args):
         if args == "" or args == "/":
@@ -233,7 +228,7 @@ class CustomerListHandler(webapp2.RequestHandler):
     next_id = c.count() + 1
 
     def get(self, args):
-        output = ""
+        output = []
         #Checking a book in
         path_info = parse_url(args)
         path_len = path_info[0]
@@ -241,17 +236,13 @@ class CustomerListHandler(webapp2.RequestHandler):
         #Get all of the customers
         if args == "" or args == "/":
             for customer in self.c:
-                output += json.dumps(customer.to_dict()) + "\n"
+                output.append(json.dumps(customer.to_dict()))
                 self.response.headers['Content-Type'] = 'application/json'
-            if output == "":
-                output += "No customerModels were found :("
 
         elif path_len == 2 and path[1].isdigit():
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
             self.response.headers['Content-Type'] = 'application/json'
-            self.response.write(json.dumps(cust_by_id.to_dict()))
-            if output == "":
-                self.response.write("Couldn\'t find customer %s!" % c_id)
+            output.append(json.dumps(cust_by_id.to_dict()))
 
         elif path_len == 4 and path[1].isdigit() and path[2] == "books":
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
@@ -261,9 +252,9 @@ class CustomerListHandler(webapp2.RequestHandler):
                     if b_id[2].isdigit():
                         self.response.headers['Content-Type'] = 'application/json'
                         book = bookModel.query(bookModel.id == int(b_id[2])).get()
-                        self.response.write(json.dumps(book.to_dict()))
-        else:
-            self.response.write("url not valid")
+                        output.append(json.dumps(book.to_dict()))
+
+        self.response.write(",".join(output).join(("[", "]")))
 
     def post(self, args):
         if args == "" or args == "/":
