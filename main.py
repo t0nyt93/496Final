@@ -122,13 +122,13 @@ class BookListHandler(webapp2.RequestHandler):
                 #Send the new entry to the Datastore
                 new_book.put()
                 self.response.status = 201
-                output.append(json.dumps(new_book.to_dict()))
-                self.response.write(",".join(output).join(("[", "]")))
+                self.response.write(json.dumps(new_book.to_dict()))
+
 
             except Exception as e:
-                self.response.write(",".join(output).join(("[", "]")))
+                self.response.write(output)
         else:
-            self.response.write(",".join(output).join(("[", "]")))
+            self.response.write(output)
 
     def delete(self, args):
         path_info = parse_url( args )
@@ -278,15 +278,13 @@ class CustomerListHandler(webapp2.RequestHandler):
                 new_customer.put()
                 self.response.headers['Content-Type'] = 'application/json'
                 self.response.status = 201
-                output.append(json.dumps(new_customer.to_dict()))
-                self.response.write(",".join(output).join(("[", "]")))
+                self.response.write.append(json.dumps(new_customer.to_dict()))
 
             except Exception as e:
-                self.response.write(",".join(output).join(("[", "]")))
-                pass
-        else:
-            self.response.write(",".join(output).join(("[", "]")))
+                self.response.write(output)
 
+        else:
+            self.response.write(output)
 
     def delete(self, args):
         #Checking a book in
@@ -313,7 +311,6 @@ class CustomerListHandler(webapp2.RequestHandler):
             for cust in self.c:
                 cust.key.delete()
 
-    #Replace contents at
     def put(self, args):
         output = []
         path_info = parse_url(args)
