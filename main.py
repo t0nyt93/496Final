@@ -24,7 +24,7 @@ PERMISSION_ADMIN = 'admin'
 
 customer_keys = []
 book_keys = []
-
+book_ids = bookModel.query().count()
 objects = []
 """
 Create Database Models
@@ -69,7 +69,7 @@ Provides a REST api for creating, updating, and deleting book objects
 
 class BookListHandler(webapp2.RequestHandler):
     b = bookModel.query()
-    book_id = b.count() + 1
+    book_id = b.count()
     """
     RESTful GET @ /books/
     """
@@ -118,6 +118,7 @@ class BookListHandler(webapp2.RequestHandler):
                     author=self.request.get('author'),
                     checkedIn=checked_flag
                 )
+                self.book_id += 1
                 #Send the new entry to the Datastore
                 new_book.put()
                 self.response.status = 201
