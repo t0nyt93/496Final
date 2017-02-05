@@ -256,6 +256,16 @@ class CustomerListHandler(webapp2.RequestHandler):
             for x in cust_by_id.checked_out:
                 if x:
                     b_id = x.split("/")
+                    if int(b_id[2]) == int(path[3]):
+                        self.response.headers['Content-Type'] = 'application/json'
+                        book = bookModel.query(bookModel.id == int(path[3])).get()
+                        output.append(json.dumps(book.to_dict()))
+
+        elif path_len == 3 and path[1].isdigit() and path[2] == "books":
+            cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
+            for x in cust_by_id.checked_out:
+                if x:
+                    b_id = x.split("/")
                     if b_id[2].isdigit():
                         self.response.headers['Content-Type'] = 'application/json'
                         book = bookModel.query(bookModel.id == int(b_id[2])).get()
