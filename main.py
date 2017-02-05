@@ -259,7 +259,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                     if int(b_id[2]) == int(path[3]):
                         self.response.headers['Content-Type'] = 'application/json'
                         book = bookModel.query(bookModel.id == int(path[3])).get()
-                        output.append(json.dumps(book.to_dict()))
+                        self.response.write(json.dumps(book.to_dict()))
 
         elif path_len == 3 and path[1].isdigit() and path[2] == "books":
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
@@ -270,8 +270,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                         self.response.headers['Content-Type'] = 'application/json'
                         book = bookModel.query(bookModel.id == int(b_id[2])).get()
                         output.append(json.dumps(book.to_dict()))
-
-        self.response.write(",".join(output).join(("[", "]")))
+            self.response.write(",".join(output).join(("[", "]")))
 
     def post(self, args):
         output = []
