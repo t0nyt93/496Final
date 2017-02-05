@@ -102,6 +102,7 @@ class BookListHandler(webapp2.RequestHandler):
 
     def post(self, args):
         if args == "" or args == "/":
+            output = []
             try:
                 checked_flag = False
                 if self.request.get('checkedIn') == ("True" or "true"):
@@ -121,11 +122,13 @@ class BookListHandler(webapp2.RequestHandler):
                 #Send the new entry to the Datastore
                 new_book.put()
                 self.response.status = 201
-                self.response.write(json.dumps(new_book.to_dict()))
+                output.append(json.dumps(new_book.to_dict()))
+                self.response.write(",".join(output).join(("[", "]")))
+
             except Exception as e:
-                self.response.write("Seems we encountered an error during object creation... \n %s" %e)
+                self.response.write(",".join(output).join(("[", "]")))
         else:
-            self.response.write("Not posting to the right URL! Try /customers")
+            self.response.write(",".join(output).join(("[", "]")))
 
     def delete(self, args):
         path_info = parse_url( args )
@@ -144,6 +147,7 @@ class BookListHandler(webapp2.RequestHandler):
         self.response.write("")
 
     def put(self, args):
+        output = []
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
@@ -177,9 +181,11 @@ class BookListHandler(webapp2.RequestHandler):
                     x.checkedIn = True
                 x.put()
                 self.response.status = 201
-                self.response.write(json.dumps(x.to_dict()))
+                output.append(json.dumps(x.to_dict()))
+        self.response.write( ",".join(output).join(("[", "]")))
 
     def patch(self, args):
+        output = []
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
@@ -216,7 +222,9 @@ class BookListHandler(webapp2.RequestHandler):
                 book.checkedIn = bool(checkFlag)
             book.put()
             self.response.status = 201
-            self.response.write(json.dumps(book.to_dict()))
+            output.append(json.dumps(book.to_dict()))
+            self.response.write(",".join(output).join(("[", "]")))
+
 
 """
 Customer Handler
@@ -256,6 +264,7 @@ class CustomerListHandler(webapp2.RequestHandler):
         self.response.write(",".join(output).join(("[", "]")))
 
     def post(self, args):
+        output = []
         if args == "" or args == "/":
             try:
                 new_customer = customerModel(
@@ -269,11 +278,15 @@ class CustomerListHandler(webapp2.RequestHandler):
                 new_customer.put()
                 self.response.headers['Content-Type'] = 'application/json'
                 self.response.status = 201
-                self.response.write(json.dumps(new_customer.to_dict()))
+                output.append(json.dumps(new_customer.to_dict()))
+                self.response.write(",".join(output).join(("[", "]")))
+
             except Exception as e:
-                self.response.write("Seems we encountered an error during object creation... \n %s" %e)
+                self.response.write(",".join(output).join(("[", "]")))
+                pass
         else:
-            self.response.write("Not posting to the right URL! Try /customers")
+            self.response.write(",".join(output).join(("[", "]")))
+
 
     def delete(self, args):
         #Checking a book in
@@ -348,8 +361,8 @@ class CustomerListHandler(webapp2.RequestHandler):
                 output.append(json.dumps(x.to_dict()))
         self.response.write( ",".join(output).join(("[", "]")))
 
-
     def patch(self, args):
+        output = []
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
@@ -381,7 +394,9 @@ class CustomerListHandler(webapp2.RequestHandler):
 
             cust.put()
             self.response.status = 201
-            self.response.write(json.dumps(cust.to_dict()))
+            output.append(json.dumps(cust.to_dict()))
+            self.response.write(",".join(output).join(("[", "]")))
+
 
 def handle_404(request, response, exception):
     response.write(' The URL you requested isn\'t valid in this site!')
