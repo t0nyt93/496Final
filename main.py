@@ -120,6 +120,7 @@ class BookListHandler(webapp2.RequestHandler):
                 )
                 #Send the new entry to the Datastore
                 new_book.put()
+                self.response.status = 201
                 self.response.write(json.dumps(new_book.to_dict()))
             except Exception as e:
                 self.response.write("Seems we encountered an error during object creation... \n %s" %e)
@@ -175,6 +176,7 @@ class BookListHandler(webapp2.RequestHandler):
                 else:
                     x.checkedIn = True
                 x.put()
+                self.response.status = 201
                 self.response.write(json.dumps(x.to_dict()))
 
     def patch(self, args):
@@ -213,6 +215,7 @@ class BookListHandler(webapp2.RequestHandler):
             if checkFlag:
                 book.checkedIn = bool(checkFlag)
             book.put()
+            self.response.status = 201
             self.response.write(json.dumps(book.to_dict()))
 
 """
@@ -273,6 +276,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                 cust_key = new_customer.put()
                 customer_keys.append( cust_key)
                 self.response.headers['Content-Type'] = 'application/json'
+                self.response.status = 201
                 self.response.write(json.dumps(new_customer.to_dict()))
             except Exception as e:
                 self.response.write("Seems we encountered an error during object creation... \n %s" %e)
@@ -347,6 +351,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                     x.id = int(self.request.get('id'))
 
                 x.put()
+                self.response.status = 201
                 self.response.write(json.dumps(x.to_dict()))
 
     def patch(self, args):
@@ -380,6 +385,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                 cust.checked_out = checkOut
 
             cust.put()
+            self.response.status = 201
             self.response.write(json.dumps(cust.to_dict()))
 
 def handle_404(request, response, exception):
