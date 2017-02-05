@@ -74,7 +74,6 @@ class BookListHandler(webapp2.RequestHandler):
     RESTful GET @ /books/
     """
     def get(self, args):
-        output = []
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
@@ -90,18 +89,18 @@ class BookListHandler(webapp2.RequestHandler):
                     books = self.b.filter(bookModel.checkedIn == False)
 
                 for book in books:
-                    output.append(json.dumps(book.to_dict()))
+                    self.response.write(json.dumps(book.to_dict()))
             else:
                 for book in self.b:
-                    output.append(json.dumps(book.to_dict()))
+                    self.response.write(json.dumps(book.to_dict()))
 
         elif path_len == 2 and path[1].isdigit():
             desired_book = self.b.filter(bookModel.id == int(path[1]))
             for x in desired_book:
-                output.append(json.dumps(x.to_dict()))
+                self.response.write(json.dumps(x.to_dict()))
 
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(output)
+
 
     def post(self, args):
         if args == "" or args == "/":
@@ -244,9 +243,9 @@ class CustomerListHandler(webapp2.RequestHandler):
         elif path_len == 2 and path[1].isdigit():
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
             self.response.headers['Content-Type'] = 'application/json'
-            output += json.dumps(cust_by_id.to_dict())
+            self.response.write(json.dumps(cust_by_id.to_dict()))
             if output == "":
-                output += "Couldn\'t find customer %s!" % c_id
+                self.response.write("Couldn\'t find customer %s!" % c_id)
 
         elif path_len == 4 and path[1].isdigit() and path[2] == "books":
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
@@ -256,12 +255,9 @@ class CustomerListHandler(webapp2.RequestHandler):
                     if b_id[2].isdigit():
                         self.response.headers['Content-Type'] = 'application/json'
                         book = bookModel.query(bookModel.id == int(b_id[2])).get()
-                        output += json.dumps(book.to_dict())
+                        self.response.write(json.dumps(book.to_dict()))
         else:
-            output = "url not valid"
-
-
-        self.response.write(output)
+            self.response.write("url not valid")
 
     def post(self, args):
         if args == "" or args == "/":
