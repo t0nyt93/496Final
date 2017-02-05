@@ -245,11 +245,13 @@ class CustomerListHandler(webapp2.RequestHandler):
             for customer in self.c:
                 output.append(json.dumps(customer.to_dict()))
                 self.response.headers['Content-Type'] = 'application/json'
+            self.response.write(",".join(output).join(("[", "]")))
 
         elif path_len == 2 and path[1].isdigit():
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
             self.response.headers['Content-Type'] = 'application/json'
             output.append(json.dumps(cust_by_id.to_dict()))
+            self.response.write(",".join(output).join(("[", "]")))
 
         elif path_len == 4 and path[1].isdigit() and path[2] == "books":
             cust_by_id = self.c.filter(customerModel.id == int(path[1])).get()
