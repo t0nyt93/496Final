@@ -302,6 +302,7 @@ class CustomerListHandler(webapp2.RequestHandler):
 
     #Replace contents at
     def put(self, args):
+        output = []
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
@@ -320,7 +321,7 @@ class CustomerListHandler(webapp2.RequestHandler):
 
             self.response.headers['Content-Type'] = 'application/json'
             self.response.status = 201
-            self.response.write(json.dumps(cust_by_id.to_dict()))
+            output.append(json.dumps(cust_by_id.to_dict()))
 
         #Lets update a customer by id
         if path_len == 2 and path[1].isdigit():
@@ -344,7 +345,9 @@ class CustomerListHandler(webapp2.RequestHandler):
 
                 x.put()
                 self.response.status = 201
-                self.response.write(json.dumps(x.to_dict()))
+                output.append(json.dumps(x.to_dict()))
+        self.response.write( ",".join(output).join(("[", "]")))
+
 
     def patch(self, args):
         path_info = parse_url(args)
