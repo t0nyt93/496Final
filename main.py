@@ -278,7 +278,7 @@ class CustomerListHandler(webapp2.RequestHandler):
                 new_customer.put()
                 self.response.headers['Content-Type'] = 'application/json'
                 self.response.status = 201
-                self.response.write.append(json.dumps(new_customer.to_dict()))
+                self.response.write(json.dumps(new_customer.to_dict()))
 
             except Exception as e:
                 self.response.write(output)
