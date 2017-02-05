@@ -77,6 +77,7 @@ class BookListHandler(webapp2.RequestHandler):
         path_info = parse_url(args)
         path_len = path_info[0]
         path = path_info[1]
+        foundFlag = 0
 
         #/books
         if args == "" or args == "/":
@@ -90,16 +91,21 @@ class BookListHandler(webapp2.RequestHandler):
 
                 for book in books:
                     self.response.write(json.dumps(book.to_dict()))
+                    foundFlag = 1
             else:
                 for book in self.b:
                     self.response.write(json.dumps(book.to_dict()))
+                    foundFlag = 1
 
         elif path_len == 2 and path[1].isdigit():
             desired_book = self.b.filter(bookModel.id == int(path[1]))
             for x in desired_book:
+                self.response.headers['Content-Type'] = 'application/json'
                 self.response.write(json.dumps(x.to_dict()))
+                foundFlag = 1
 
-        self.response.headers['Content-Type'] = 'application/json'
+        if !foundFlag:
+            self.response.write("[]")
 
 
     def post(self, args):
