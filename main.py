@@ -24,7 +24,6 @@ PERMISSION_ADMIN = 'admin'
 
 customer_keys = []
 book_keys = []
-book_ids = bookModel.query().count()
 objects = []
 """
 Create Database Models
