@@ -21,7 +21,6 @@ PERMISSION_ADMIN = 'admin'
 #   book_keys.append(entity.key())
 #I feel like you've already got the overhead of the Query though, so maybe you're just saving on process
 #memory at that point..
-
 customer_keys = []
 book_keys = []
 objects = []
@@ -43,7 +42,6 @@ class customerModel(ndb.Model):
     name = ndb.StringProperty()
     balance = ndb.StringProperty()
     checked_out = ndb.StringProperty(repeated=True)
-
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
@@ -68,7 +66,7 @@ Provides a REST api for creating, updating, and deleting book objects
 
 class BookListHandler(webapp2.RequestHandler):
     b = bookModel.query()
-    book_id = b.count()
+
     """
     RESTful GET @ /books/
     """
@@ -110,14 +108,16 @@ class BookListHandler(webapp2.RequestHandler):
                     checked_flag = True
 
                 new_book = bookModel(
-                    id=self.book_id,
+                    id = 0,
                     title=self.request.get('title'),
                     isbn=self.request.get('isbn'),
                     genre=self.request.get_all('genre'),
                     author=self.request.get('author'),
                     checkedIn=checked_flag
                 )
-                self.book_id += 1
+                book_key = new_book.put()
+                new_book.id = book_key.id()
+
                 #Send the new entry to the Datastore
                 new_book.put()
                 self.response.status = 201
@@ -225,7 +225,6 @@ Provides a REST api for creating, updating, and deleting Customer objects
 """
 class CustomerListHandler(webapp2.RequestHandler):
     c = customerModel.query()
-    next_id = c.count() + 1
 
     def get(self, args):
         output = []
@@ -260,14 +259,14 @@ class CustomerListHandler(webapp2.RequestHandler):
         if args == "" or args == "/":
             try:
                 new_customer = customerModel(
-                    id=self.next_id,
+                    id = 0,
                     name=self.request.get('name'),
                     balance=self.request.get('balance'),
                     checked_out=self.request.get_all('checked_out')
                 )
-
-                cust_key = new_customer.put()
-                customer_keys.append( cust_key)
+                customer_key = new_customer.put()
+                new_customer.id = customer_key.integer_id()
+                new_customer.put()
                 self.response.headers['Content-Type'] = 'application/json'
                 self.response.status = 201
                 self.response.write(json.dumps(new_customer.to_dict()))
