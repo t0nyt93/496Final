@@ -104,7 +104,7 @@ class BookListHandler(webapp2.RequestHandler):
                 self.response.write(json.dumps(x.to_dict()))
                 foundFlag = 1
 
-        if !foundFlag:
+        if not foundFlag:
             self.response.write("[]")
 
 
