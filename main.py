@@ -4,6 +4,9 @@ import os
 import cgi
 from google.appengine.ext import ndb
 from cStringIO import StringIO
+#Logging for....logging?
+import logging
+
 
 # RESTful permissions
 PERMISSION_ANYONE = 'anyone'
@@ -11,24 +14,12 @@ PERMISSION_LOGGED_IN_USER = 'logged_in_user'
 PERMISSION_OWNER_USER = 'owner_user'
 PERMISSION_ADMIN = 'admin'
 
-#So my limited understanding leads me to belive that these keys are solely available
-#in the context of the Process Memory. Therefore if we've restarted the server, we
-#lost all of the keys that we'd previously created, granted we can the objects with query...
-#
-#HALLELUJAH
-#If you're interested the server could have a startup task that got all entities, and then just did
-# for entity in books:
-#   book_keys.append(entity.key())
-#I feel like you've already got the overhead of the Query though, so maybe you're just saving on process
-#memory at that point..
 customer_keys = []
 book_keys = []
 objects = []
 """
 Create Database Models
 """
-
-
 class bookModel(ndb.Model):
     id = ndb.IntegerProperty()
     title = ndb.StringProperty()
@@ -405,6 +396,9 @@ class CustomerListHandler(webapp2.RequestHandler):
             output.append(json.dumps(cust.to_dict()))
             self.response.write(",".join(output).join(("[", "]")))
 
+class OAuthHandler(webapp2.RequestHandler):
+    def get(self):
+        logging.debug(repr(self.request.body))
 
 def handle_404(request, response, exception):
     response.write(' The URL you requested isn\'t valid in this site!')
@@ -419,6 +413,7 @@ def handle_500(request, response, exception):
 allowed_methods = webapp2.WSGIApplication.allowed_methods
 new_allowed_methods = allowed_methods.union(('PATCH',))
 webapp2.WSGIApplication.allowed_methods = new_allowed_methods
+
 app = webapp2.WSGIApplication([
     ('/', WelcomeHandler),
 ], debug=True)
@@ -428,6 +423,7 @@ app.error_handlers[500] = handle_500
 
 app.router.add((r'/books(.*)', BookListHandler))
 app.router.add((r'/customers(.*)', CustomerListHandler))
+app.router.add(('/oauth', OAuthHandler))
 
 def parse_url( url ):
     x = url.split("/")
