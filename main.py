@@ -1,8 +1,11 @@
 import json
 import webapp2
+import random, string
 import os
 import cgi
 from google.appengine.ext import ndb
+from google.appengine.api import urlfetch
+import urllib
 from cStringIO import StringIO
 #Logging for....logging?
 import logging
@@ -17,6 +20,7 @@ PERMISSION_ADMIN = 'admin'
 customer_keys = []
 book_keys = []
 objects = []
+client_states = []
 """
 Create Database Models
 """
@@ -35,8 +39,44 @@ class customerModel(ndb.Model):
     checked_out = ndb.StringProperty(repeated=True)
 
 class WelcomeHandler(webapp2.RequestHandler):
+
+    google_get_url = "https://accounts.google.com/o/oauth2/v2/auth"
+    client_id = "620609018385-j0o29rkh4uke0abka57v75k538el685n.apps.googleusercontent.com"
+    redirect_uri = "https://lasthope-155502.appspot.com/oauth"
+    state = ''
+
+
+
     def get(self):
-        self.response.write('Hello, CS496!')
+        self.response.write('<form action="" method="post"><button name="auth" value="signIn"> Let\'s try OAuth2.0! </button> </form>')
+
+    def post(self):
+        x = self.request.get("auth")
+        if x == "signIn":
+            #Let's try to get a code from
+            #Generate a pseudo random State for this request.
+            self.state = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(20))
+            #Create our form data
+            form_fields = {
+                'response_type':'code',
+                'client_id': self.client_id,
+                'redirect_uri': self.redirect_uri,
+                'scope': 'email',
+                'state': self.state
+            }
+            param_data = urllib.urlencode(form_fields)
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            try:
+                result = urlfetch.fetch(
+                    url=self.google_get_url + "?" + param_data,
+                    payload=None,
+                    method=urlfetch.GET,
+                    headers=headers
+                )
+                client_states.append(self.state)
+                self.response.write(result.content)
+            except urlfetch.Error as e:
+                self.response.write( "Error! " + e )
 
     def delete(self):
         b = bookModel.query()
@@ -398,7 +438,15 @@ class CustomerListHandler(webapp2.RequestHandler):
 
 class OAuthHandler(webapp2.RequestHandler):
     def get(self):
+        self.response.write(self.request.GET)
+        given_state = self.request.get("state")
+        code = self.request.get("code")
+        if code and given_state:
+            self.response.write(code)
+            self.response.write("\n")
+            self.response.write(given_state)
         logging.debug(repr(self.request.body))
+
 
 def handle_404(request, response, exception):
     response.write(' The URL you requested isn\'t valid in this site!')
