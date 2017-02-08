@@ -54,7 +54,6 @@ class WelcomeHandler(webapp2.RequestHandler):
     def post(self):
         x = self.request.get("auth")
         if x == "signIn":
-            #Let's try to get a code from
             #Generate a pseudo random State for this request.
             state = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(20))
             #Create our form data
@@ -75,7 +74,6 @@ class WelcomeHandler(webapp2.RequestHandler):
                     headers=headers
                 )
                 client_states.append(state)
-                self.response.write(result.content)
             except urlfetch.Error as e:
                 self.response.write("Error! " + e)
 
@@ -463,6 +461,8 @@ class OAuthHandler(webapp2.RequestHandler):
                 self.response.write(result.content)
             except urlfetch.Error as e:
                 self.response.write("Error! " + e)
+        else:
+            self.response.write("Couldn't find a STATE or Code...")
 
 def handle_404(request, response, exception):
     response.write(' The URL you requested isn\'t valid in this site!')
