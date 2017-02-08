@@ -476,7 +476,15 @@ class OAuthHandler(webapp2.RequestHandler):
                         method=urlfetch.GET,
                         headers=headers
                     )
-                    self.response.write(result.content)
+                    profile_info = json.loads(result.content)
+                    firstName = profile_info['name']['givenName']
+                    lastName = profile_info['name']['familyName']
+                    profile_url = profile_info['url']
+                    response = "Hello " + firstName + " " + lastName + "!\n" \
+                               + "Feel free to checkout your Google + profile at " + profile_url + " ...\n" \
+                               + " Also here's the Super Secret randomly generated state we used: " + given_state
+
+                    self.response.write(response)
 
                 except urlfetch.Error as e:
                     self.response.write("Error! " + e)
