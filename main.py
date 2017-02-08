@@ -455,7 +455,7 @@ class OAuthHandler(webapp2.RequestHandler):
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             try:
                 result = urlfetch.fetch(
-                    url=self.google_post_url,
+                    url=google_post_url,
                     payload=param_data,
                     method=urlfetch.POST,
                     headers=headers
