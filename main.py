@@ -24,7 +24,7 @@ client_states = []
 
 google_get_url = "https://accounts.google.com/o/oauth2/v2/auth"
 google_post_url = "https://www.googleapis.com/oauth2/v4/token"
-google_plus_url = "https://googleapis.com/plus/v1/people/me"
+google_plus_url = "https://www.googleapis.com/plus/v1/people/me"
 
 client_id = "620609018385-j0o29rkh4uke0abka57v75k538el685n.apps.googleusercontent.com"
 client_secret = "uGAU8L-zTywTh6Pry1cse57B"
