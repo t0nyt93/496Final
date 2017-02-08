@@ -462,14 +462,24 @@ class OAuthHandler(webapp2.RequestHandler):
                     headers=headers
                 )
                 #Contains access_token, token_type, expires_in, id_token
-                self.response.write(result.content)
                 info = json.loads(result.content)
                 access_token = info['access_token']
                 token_type = info['token_type']
                 expires_in = info['expires_in']
                 id_token = info['id_token']
 
-                self.response.write(access_token)
+                headers = {'Authorization': token_type + " " + access_token}
+                try:
+                    result = urlfetch.fetch(
+                        url=google_plus_url,
+                        payload=None,
+                        method=urlfetch.GET,
+                        headers=headers
+                    )
+                    self.response.write(result.content)
+
+                except urlfetch.Error as e:
+                    self.response.write("Error! " + e)
 
             except urlfetch.Error as e:
                 self.response.write("Error! " + e)
