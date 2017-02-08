@@ -74,6 +74,7 @@ class WelcomeHandler(webapp2.RequestHandler):
                     headers=headers
                 )
                 client_states.append(state)
+                self.response.write(result.content)
             except urlfetch.Error as e:
                 self.response.write("Error! " + e)
 
